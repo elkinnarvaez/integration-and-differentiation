@@ -1,1 +1,1 @@
-# integration-and-differentiation
+# Numerical Integration and Differentiation
