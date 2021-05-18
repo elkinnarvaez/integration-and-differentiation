@@ -12,6 +12,7 @@ def main():
     f4 = sym.sinh(x)*0.3 + x**3 - sym.exp(x) + sym.pi
     f5 = sym.sin(x**2 + 10)/2**((x**3 -3 + sym.pi/2)/sym.pi)
     functions = [f1, f2, f3, f4, f5]
+    # NOTE: If you define a new function, you also need to add it to the functions list in order to use it later on
     i = 1
     for func in functions:
         print(f"{i}. {func}")
@@ -61,7 +62,7 @@ def main():
     ax2.plot(x_values, second_der_values, label="Numerical second derivative")
     ax2.legend()
     ax2.set_xlabel("x")
-    ax2.set_ylabel("df(x)/dx")
+    ax2.set_ylabel("d2f(x)/dx2")
     # ax2.set_title(f'Analytic and numerical second derivative')
     # ax2.grid(True)
 
