@@ -13,6 +13,7 @@ def main():
     f5 = sym.sin(x**2 + 10)/2**((x**3 -3 + sym.pi/2)/sym.pi)
     functions = [f1, f2, f3, f4, f5]
     # NOTE: If you define a new function, you also need to add it to the functions list in order to use it later on
+    # NOTE: The analytic derivate is calculated using sym.diff Pytohn function, so you don't need to provide it to the program
     i = 1
     for func in functions:
         print(f"{i}. {func}")
@@ -38,6 +39,7 @@ def main():
     der_values = list()
     second_der_values = list()
     h = 0.1
+    # First and second derivative evaluation and approximation
     for x in x_values:
         f_values.append(f.subs(sym.Symbol('x'), x))
         analytic_der_values.append(analytic_der.subs(sym.Symbol('x'), x))
