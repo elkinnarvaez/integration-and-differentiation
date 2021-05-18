@@ -7,15 +7,10 @@ from differentiation import forward_difference, backward_difference, centered_di
 def main():
     x = sym.Symbol('x')
     f1 = x*sym.sin(x**2) + 1
-    # analytic_der1 = sym.diff(f1, x)
     f2 = sym.cos(x**2) - x**3 + sym.exp(x)
-    # analytic_der2 = sym.diff(f2, x)
     f3 = sym.sin(sym.pi*x) + x**2 + 2
-    # analytic_der3 = sym.diff(f3, x)
     f4 = sym.sinh(x)*0.3 + x**3 - sym.exp(x) + sym.pi
-    # analytic_der4 = sym.diff(f4, x)
     f5 = sym.sin(x**2 + 10)/2**((x**3 -3 + sym.pi/2)/sym.pi)
-    # analytic_der5 = sym.diff(f5, x)
     functions = [f1, f2, f3, f4, f5]
     i = 1
     for func in functions:
@@ -57,7 +52,7 @@ def main():
     ax1.legend()
     ax1.set_xlabel("x")
     ax1.set_ylabel("df(x)/dx")
-    # ax1.set_title(f'Sequential algorithm')
+    # ax1.set_title(f'Analytic and numerical derivative')
     # ax1.grid(True)
 
     fig2, ax2 = plt.subplots()
@@ -67,7 +62,7 @@ def main():
     ax2.legend()
     ax2.set_xlabel("x")
     ax2.set_ylabel("df(x)/dx")
-    # ax2.set_title(f'Sequential algorithm')
+    # ax2.set_title(f'Analytic and numerical second derivative')
     # ax2.grid(True)
 
     plt.show()
