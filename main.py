@@ -64,7 +64,7 @@ def main():
         # First derivative approximation
         start1 = time.time()
         for x in x_values:
-            der_values.append(centered_difference(f, x, h)) # We can change the differentiation method here
+            der_values.append(backward_difference(f, x, h)) # We can change the differentiation method here
         end1 = time.time()
         elapsed1 = end1 - start1
 

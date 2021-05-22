@@ -49,112 +49,220 @@ def main():
         print(f"f(x) = {f}")
         print(f"df(x)/dx = {analytic_der}")
         print(f"d2f(x)/dx2 = {analytic_second_der}")
+
         x_values = list(np.linspace(MIN, MAX, num = 1000))
-        f_values = list()
+
+        x_axis = list()
+        y_axis_mean_error_forward_difference = list()
+        y_axis_mean_error_backward_difference = list()
+        y_axis_mean_error_centered_difference = list()
+        y_axis_mean_error_second_derivative_centered_difference = list()
+
+        y_axis_error_std_forward_difference = list()
+        y_axis_error_std_backward_difference = list()
+        y_axis_error_std_centered_difference = list()
+        y_axis_error_std_second_derivative_centered_difference = list()
+
+        running_time_forward_difference = list()
+        running_time_backward_difference = list()
+        running_time_centered_difference = list()
+        running_time_second_derivative_centered_difference = list()
+
         analytic_der_values = list()
         analytic_second_der_values = list()
-        der_values = list()
-        second_der_values = list()
-        h = 0.1
         # First and second derivative evaluation
         for x in x_values:
-            f_values.append(float(f.subs(sym.Symbol('x'), x).evalf()))
             analytic_der_values.append(float(analytic_der.subs(sym.Symbol('x'), x).evalf()))
             analytic_second_der_values.append(float(analytic_second_der.subs(sym.Symbol('x'), x).evalf()))
-        # First derivative approximation
-        start1 = time.time()
-        for x in x_values:
-            der_values.append(centered_difference(f, x, h)) # We can change the differentiation method here
-        end1 = time.time()
-        elapsed1 = end1 - start1
 
-        # Second derivative approximation
-        start2 = time.time()
-        for x in x_values:
-            second_der_values.append(second_derivative_centered_difference(f, x, h))
-        end2 = time.time()
-        elapsed2 = end2 - start2
+        h_values = list(np.linspace(0.001, 1.5, num = 5))
+        for h in h_values:
+            print(h)
+            x_axis.append(h)
 
-        # Evaluation
-        der_error = abs_error(analytic_der_values, der_values)
-        mean_der_error = np.mean(der_error)
-        der_error_std = np.std(der_error)
+            # First derivative approximation: forward difference
+            der_values = list()
+            start = time.time()
+            for x in x_values:
+                der_values.append(forward_difference(f, x, h))
+            end = time.time()
+            elapsed = end - start
 
-        second_der_error = abs_error(analytic_second_der_values, second_der_values)
-        mean_second_der_error = np.mean(second_der_error)
-        second_der_error_std = np.std(second_der_error)
+            # Evaluation
+            der_error = abs_error(analytic_der_values, der_values)
+            mean_der_error = np.mean(der_error)
+            der_error_std = np.std(der_error)
+
+            y_axis_mean_error_forward_difference.append(mean_der_error)
+            y_axis_error_std_forward_difference.append(der_error_std)
+            running_time_forward_difference.append(elapsed)
+
+            # First derivative approximation: backward difference
+            der_values = list()
+            start = time.time()
+            for x in x_values:
+                der_values.append(backward_difference(f, x, h))
+            end = time.time()
+            elapsed = end - start
+
+            # Evaluation
+            der_error = abs_error(analytic_der_values, der_values)
+            mean_der_error = np.mean(der_error)
+            der_error_std = np.std(der_error)
+
+            y_axis_mean_error_backward_difference.append(mean_der_error)
+            y_axis_error_std_backward_difference.append(der_error_std)
+            running_time_backward_difference.append(elapsed)
+
+            # First derivative approximation: centered difference
+            der_values = list()
+            start = time.time()
+            for x in x_values:
+                der_values.append(centered_difference(f, x, h))
+            end = time.time()
+            elapsed = end - start
+
+            # Evaluation
+            der_error = abs_error(analytic_der_values, der_values)
+            mean_der_error = np.mean(der_error)
+            der_error_std = np.std(der_error)
+
+            y_axis_mean_error_centered_difference.append(mean_der_error)
+            y_axis_error_std_centered_difference.append(der_error_std)
+            running_time_centered_difference.append(elapsed)
+
+            second_der_values = list()
+
+            # Second derivative approximation: centered difference
+            start = time.time()
+            for x in x_values:
+                second_der_values.append(second_derivative_centered_difference(f, x, h))
+            end = time.time()
+            elapsed = end - start
+
+            # Evaluation
+            second_der_error = abs_error(analytic_second_der_values, second_der_values)
+            mean_second_der_error = np.mean(second_der_error)
+            second_der_error_std = np.std(second_der_error)
+
+            y_axis_mean_error_second_derivative_centered_difference.append(mean_second_der_error)
+            y_axis_error_std_second_derivative_centered_difference.append(second_der_error_std)
+            running_time_second_derivative_centered_difference.append(elapsed)
 
         # Plotting
         fig1, ax1 = plt.subplots()
-        # ax1.plot(x_values, f_values, label="Function")
-        ax1.plot(x_values, analytic_der_values, label="Analytic derivative")
-        ax1.plot(x_values, der_values, label="Numerical derivative")
+        ax1.plot(x_axis, y_axis_mean_error_forward_difference, label="Forward difference")
+        ax1.plot(x_axis, y_axis_mean_error_backward_difference, label="Backward difference")
+        ax1.plot(x_axis, y_axis_mean_error_centered_difference, label="Centered difference")
         ax1.legend()
-        ax1.set_xlabel("x")
-        ax1.set_ylabel("df(x)/dx")
-        scalar_offset = 0 # 1.3
-        x0_1, xmax_1 = plt.xlim()
-        y0_1, ymax_1 = plt.ylim()
-        text_x_pos_1 = 1.49
-        text_y_pos_1 = y0_1 + (ymax_1 - y0_1) + scalar_offset
-        ax1.text(text_x_pos_1, text_y_pos_1, "Mean error: {:e} \nStandard deviation: {:e} \nRunning time: {:e} sec".format(mean_der_error, der_error_std, elapsed1), bbox=dict(boxstyle="round",
-                    ec=(1., 0.5, 0.5),
-                    fc=(1., 0.9, 0.8),
-                    ))
-        # ax1.set_title(f'Analytic and numerical derivative')
-        # ax1.grid(True)
+        ax1.set_xlabel("h")
+        ax1.set_ylabel("Mean error")
 
         fig2, ax2 = plt.subplots()
-        # ax2.plot(x_values, f_values, label="Function")
-        ax2.plot(x_values, analytic_second_der_values, label="Analytic second derivative")
-        ax2.plot(x_values, second_der_values, label="Numerical second derivative")
+        ax2.plot(x_axis, y_axis_error_std_forward_difference, label="Forward difference")
+        ax2.plot(x_axis, y_axis_error_std_backward_difference, label="Backward difference")
+        ax2.plot(x_axis, y_axis_error_std_centered_difference, label="Centered difference")
         ax2.legend()
-        ax2.set_xlabel("x")
-        ax2.set_ylabel("d2f(x)/dx2")
-        scalar_offset = 0 # 1.7
-        x0_2, xmax_2 = plt.xlim()
-        y0_2, ymax_2 = plt.ylim()
-        text_x_pos_2 = 1.45
-        text_y_pos_2 = y0_2 + (ymax_2 - y0_2) + scalar_offset
-        ax2.text(text_x_pos_2, text_y_pos_2, "Mean error: {:e} \nStandard deviation: {:e} \nRunning time: {:e} sec".format(mean_second_der_error, second_der_error_std, elapsed2), bbox=dict(boxstyle="round",
-                    ec=(1., 0.5, 0.5),
-                    fc=(1., 0.9, 0.8),
-                    ))
-        # ax2.set_title(f'Analytic and numerical second derivative')
-        # ax2.grid(True)
+        ax2.set_xlabel("h")
+        ax2.set_ylabel("Standard deviation")
 
         fig3, ax3 = plt.subplots()
-        # ax2.plot(x_values, f_values, label="Function")
-        ax3.plot(x_values, f_values)
-        ax3.set_xlabel("x")
-        ax3.set_ylabel("f(x)")
-        # ax3.set_title(f'Function')
-        # ax3.grid(True)
+        ax3.plot(x_axis, running_time_forward_difference, label="Forward difference")
+        ax3.plot(x_axis, running_time_backward_difference, label="Backward difference")
+        ax3.plot(x_axis, running_time_centered_difference, label="Centered difference")
+        ax3.legend()
+        ax3.set_xlabel("h")
+        ax3.set_ylabel("Time (seconds)")
+
+        fig4, ax4 = plt.subplots()
+        ax4.plot(x_axis, y_axis_mean_error_second_derivative_centered_difference, label="Centered difference")
+        ax4.legend()
+        ax4.set_xlabel("h")
+        ax4.set_ylabel("Mean error")
+
+        fig5, ax5 = plt.subplots()
+        ax5.plot(x_axis, y_axis_error_std_second_derivative_centered_difference, label="Centered difference")
+        ax5.legend()
+        ax5.set_xlabel("h")
+        ax5.set_ylabel("Standard deviation")
+
+        fig6, ax6 = plt.subplots()
+        ax6.plot(x_axis, running_time_second_derivative_centered_difference, label="Centered difference")
+        ax6.legend()
+        ax6.set_xlabel("h")
+        ax6.set_ylabel("Time (seconds)")
 
         plt.show()
     else:
-        good = False
-        n = None
-        while(not good):
-            n = int(input("Please select the number of panels: "))
-            if(n <= 0):
-                print("Invalid option. Please try again")
-            else:
-                good = True
         a = MIN
         b = MAX
         analytic_integral = sym.integrate(f, sym.Symbol('x'))
         definite_integral = sym.integrate(f, (sym.Symbol('x'), a, b)).evalf()
-        start = time.time()
-        approximate_definite_integral = composite_trapezoid_rule(f, a, b, n)
-        end = time.time()
-        elapsed = end - start
         print(f"f(x) = {f}")
         print(f"∫f(x) = {analytic_integral}")
         print(f"∫f(x)|(a = {a}, b = {b}) = {definite_integral}")
-        print(f"Approximate ∫f(x)|(a = {a}, b = {b}) = {approximate_definite_integral}")
-        print("Running time:", elapsed)
-        print("Error:", abs(approximate_definite_integral - definite_integral))
+
+        x_axis = list()
+        
+        running_time_composite_rectangle_rule = list()
+        running_time_composite_trapezoid_rule = list()
+        running_time_composite_simpsons_rule = list()
+
+        abs_error_composite_rectangle_rule = list()
+        abs_error_composite_trapezoid_rule = list()
+        abs_error_composite_simpsons_rule = list()
+
+        n = 10
+        while(n <= 100):
+            print(n)
+            x_axis.append(n)
+            # Composite rectangle rule
+            start = time.time()
+            approximate_definite_integral = composite_rectangle_rule(f, a, b, n)
+            end = time.time()
+            elapsed = end - start
+            error = abs(approximate_definite_integral - definite_integral)
+            running_time_composite_rectangle_rule.append(elapsed)
+            abs_error_composite_rectangle_rule.append(error)
+
+            # Composite trapezoid rule
+            start = time.time()
+            approximate_definite_integral = composite_trapezoid_rule(f, a, b, n)
+            end = time.time()
+            elapsed = end - start
+            error = abs(approximate_definite_integral - definite_integral)
+            running_time_composite_trapezoid_rule.append(elapsed)
+            abs_error_composite_trapezoid_rule.append(error)
+
+            # Composite simpsons rule
+            start = time.time()
+            approximate_definite_integral = composite_simpsons_rule(f, a, b, n)
+            end = time.time()
+            elapsed = end - start
+            error = abs(approximate_definite_integral - definite_integral)
+            running_time_composite_simpsons_rule.append(elapsed)
+            abs_error_composite_simpsons_rule.append(error)
+            n += 10
+
+        # Plotting
+        fig1, ax1 = plt.subplots()
+        ax1.plot(x_axis, abs_error_composite_rectangle_rule, label="Composite rectangle rule")
+        ax1.plot(x_axis, abs_error_composite_trapezoid_rule, label="Composite trapezoid rule")
+        ax1.plot(x_axis, abs_error_composite_simpsons_rule, label="Composite Simpsons rule")
+        ax1.legend()
+        ax1.set_xlabel("Number of panels")
+        ax1.set_ylabel("Absolute error")
+
+        fig2, ax2 = plt.subplots()
+        ax2.plot(x_axis, running_time_composite_rectangle_rule, label="Composite rectangle rule")
+        ax2.plot(x_axis, running_time_composite_trapezoid_rule, label="Composite trapezoid rule")
+        ax2.plot(x_axis, running_time_composite_simpsons_rule, label="Composite Simpsons rule")
+        ax2.legend()
+        ax2.set_xlabel("Number of panels")
+        ax2.set_ylabel("Time (seconds)")
+
+        plt.show()
+
     return 0
 
 if __name__ == '__main__':
