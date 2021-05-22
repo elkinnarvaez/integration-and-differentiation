@@ -75,7 +75,7 @@ def main():
             analytic_der_values.append(float(analytic_der.subs(sym.Symbol('x'), x).evalf()))
             analytic_second_der_values.append(float(analytic_second_der.subs(sym.Symbol('x'), x).evalf()))
 
-        h_values = list(np.linspace(0.001, 1.5, num = 5))
+        h_values = list(np.linspace(0.001, 2, num = 10))
         for h in h_values:
             print(h)
             x_axis.append(h)
@@ -213,7 +213,7 @@ def main():
         abs_error_composite_simpsons_rule = list()
 
         n = 10
-        while(n <= 100):
+        while(n <= 200):
             print(n)
             x_axis.append(n)
             # Composite rectangle rule
